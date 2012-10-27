@@ -12,37 +12,49 @@
 class EWSType_GroupByType extends EWSType
 {
     /**
-     * FieldURI property
+     * Determines the order of the groups in the grouped item array that is
+     * returned in the response.
+     *
+     * @since Exchange 2007
+     *
+     * @var EWSType_SortDirectionType
+     */
+    public $Order;
+
+    /**
+     * Identifies frequently referenced properties by URI.
+     *
+     * @since Exchange 2007
      *
      * @var EWSType_PathToUnindexedFieldType
      */
     public $FieldURI;
 
     /**
-     * IndexedFieldURI property
+     * Identifies individual members of a dictionary.
+     *
+     * @since Exchange 2007
      *
      * @var EWSType_PathToIndexedFieldType
      */
     public $IndexedFieldURI;
 
     /**
-     * ExtendedFieldURI property
+     * Identifies extended MAPI properties to get, set, or create.
+     *
+     * @since Exchange 2007
      *
      * @var EWSType_PathToExtendedFieldType
      */
     public $ExtendedFieldURI;
 
     /**
-     * AggregateOn property
+     * Represents the field that is used to determine the order of groups in a
+     * response.
+     *
+     * @since Exchange 2007
      *
      * @var EWSType_AggregateOnType
      */
     public $AggregateOn;
-
-    /**
-     * Order property
-     *
-     * @var EWSType_SortDirectionType
-     */
-    public $Order;
 }

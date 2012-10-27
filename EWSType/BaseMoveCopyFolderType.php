@@ -1,27 +1,30 @@
 <?php
 /**
- * Definition of the BaseMoveCopyFolderType type
- *
- * @package php-ews
- * @subpackage Types
+ * Contains EWSType_BaseMoveCopyFolderType.
  */
 
 /**
  * Definition of the BaseMoveCopyFolderType type
+ *
+ * @package php-ews\Types
  */
 class EWSType_BaseMoveCopyFolderType extends EWSType
 {
     /**
-     * ToFolderId property
+     * Represents the destination folder for a copied folder.
      *
-     * @var EWSType_TargetFolderIdType
-     */
-    public $ToFolderId;
-
-    /**
-     * FolderIds property
+     * @since Exchange 2007
      *
      * @var EWSType_NonEmptyArrayOfBaseFolderIdsType
      */
     public $FolderIds;
+
+    /**
+     * Represents the destination folder for a copied folder.
+     *
+     * @since Exchange 2007
+     *
+     * @var EWSType_TargetFolderIdType
+     */
+    public $ToFolderId;
 }
