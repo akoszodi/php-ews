@@ -299,7 +299,6 @@ class EWSAutodiscover
         $majorversion = base_convert(substr($svbinary, 4, 6), 2, 10);
         $minorversion = base_convert(substr($svbinary, 10, 6), 2, 10);
         $buildversion = base_convert(substr($svbinary, 17, 15), 2, 10);
-
         if ($majorversion == 8) {
             switch ($minorversion) {
                 case 0:
@@ -328,12 +327,21 @@ class EWSAutodiscover
                 case 2:
                     return ExchangeWebServices::VERSION_2010_SP2;
                     break;
+                case 3:
+                    return ExchangeWebServices::VERSION_2010_SP3;
+                break;
                 default:
                     return ExchangeWebServices::VERSION_2010;
             }
         }
+        elseif ($majorversion == 15) {
+            if ($buildversion > 846) {
+                return ExchangeWebServices::VERSION_2013_SP1;
+            }
+            return ExchangeWebServices::VERSION_2013;
+        }
 
-        // Guess we didn't find a known version.
+      // Guess we didn't find a known version.
         return false;
     }
 
@@ -357,7 +365,6 @@ class EWSAutodiscover
 
         $server = false;
         $version = null;
-
         // Pick out the host from the EXPR (Exchange RPC over HTTP).
         foreach ($this->discovered['Account']['Protocol'] as $protocol) {
             if (
@@ -416,7 +423,7 @@ class EWSAutodiscover
      */
     public function tryTLD()
     {
-        $url = 'https://www.'.$this->tld . self::AUTODISCOVER_PATH;
+      $url = 'https://'.$this->tld . self::AUTODISCOVER_PATH;
         $result = $this->doNTLMPost($url, 5);
         if ($result) {
             return self::AUTODISCOVERED_VIA_TLD;
@@ -565,11 +572,10 @@ class EWSAutodiscover
     public function doNTLMPost($url, $timeout = 6)
     {
         $this->reset();
-
         $ch = curl_init();
         $opts = array(
             CURLOPT_URL             => $url,
-            CURLOPT_HTTPAUTH        => CURLAUTH_NTLM,
+            CURLOPT_HTTPAUTH        => CURLAUTH_ANY,
             CURLOPT_CUSTOMREQUEST   => 'POST',
             CURLOPT_POSTFIELDS      => $this->getAutoDiscoverRequest(),
             CURLOPT_RETURNTRANSFER  => true,
@@ -581,7 +587,7 @@ class EWSAutodiscover
             CURLOPT_HEADERFUNCTION  => array($this, 'readHeaders'),
             CURLOPT_IPRESOLVE       => CURL_IPRESOLVE_V4,
             CURLOPT_SSL_VERIFYPEER  => true,
-            CURLOPT_SSL_VERIFYHOST  => true,
+            CURLOPT_SSL_VERIFYHOST  => 2,
         );
 
         // Set the appropriate content-type.
@@ -605,6 +611,10 @@ class EWSAutodiscover
         $this->last_info        = curl_getinfo($ch);
         $this->last_curl_errno  = curl_errno($ch);
         $this->last_curl_error  = curl_error($ch);
+
+        if($this->last_info['url'] != $url) {
+            return $this->doNTLMPost($this->last_info['url'],$timeout);
+        }
 
         if ($this->last_curl_errno != CURLE_OK) {
             return false;
