@@ -341,7 +341,7 @@ class EWSAutodiscover
             return ExchangeWebServices::VERSION_2013;
         }
 
-      // Guess we didn't find a known version.
+        // Guess we didn't find a known version.
         return false;
     }
 
